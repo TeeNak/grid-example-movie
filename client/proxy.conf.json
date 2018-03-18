@@ -1,0 +1,11 @@
+{
+  "/hrdemo/**": {
+    "target": "http://localhost:8091",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "autoRewrite": true,
+    "pathRewrite": { "http://localhost:8091/": "/" }
+  }
+}
+
