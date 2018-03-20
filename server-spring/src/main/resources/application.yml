@@ -1,0 +1,23 @@
+
+server:
+  contextPath: /hrdemo
+  port: 8091
+
+spring:
+  datasource:
+    # HSQL Settings
+    platform: hsqldb
+    driverClassName: org.hsqldb.jdbcDriver
+    url: jdbc:hsqldb:mem:hrdemo
+    #url: jdbc:hsqldb:hsql://localhost/hrdemo
+    username: sa
+    password:
+    # initialization
+    #schema: "classpath*:schema.sql"
+    data: "classpath*:data.sql"
+    #data: "classpath*:data_100000.sql"
+
+  # to avoid initialization done by hibernate
+  jpa.hibernate.ddl-auto: none
+  data.rest.max-page-size: 100000
+
