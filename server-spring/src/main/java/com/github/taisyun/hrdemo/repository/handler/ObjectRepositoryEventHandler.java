@@ -25,7 +25,7 @@ public class ObjectRepositoryEventHandler {
     public void handleBeforeSave(Object obj) {
 
         logger.debug("Saving Obj " + obj.toString());
-        entityManager.detach(obj); // necessary to make optimistic lock work
+        //entityManager.detach(obj); // necessary to make optimistic lock work // we should use Etag for optimistic lock
 
     }
 }

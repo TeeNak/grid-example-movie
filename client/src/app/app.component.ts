@@ -39,14 +39,14 @@ export class AppComponent {
 
   public doLoadData = function() {
     const response: Observable<Response> =
-        this.http.get('/hrdemo/jobs?size=100000');
+        this.http.get('/hrdemo/jobs/list');
 
     const result = new Promise<{}>(
       (resolve: (value?: any) => void, reject: (reason?: any) => void) => {
         response
         .subscribe(
             (json: any) => {
-                const data = json._embedded.jobs;
+                const data = json;
                 this.rowData = data;
                 resolve(data);
             },
