@@ -35,7 +35,7 @@ public class JobController {
     @RequestMapping(value = "/jobs/list", method = RequestMethod.PUT)
     public ResponseEntity<String> putJobList(@RequestBody List<Job> jobs) {
 
-        jobRepository.save(jobs);
+        jobRepository.saveAll(jobs);
         return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
     }
 

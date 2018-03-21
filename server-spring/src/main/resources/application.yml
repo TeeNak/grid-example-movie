@@ -1,6 +1,6 @@
 
 server:
-  contextPath: /hrdemo
+  servlet.contextPath: /hrdemo
   port: 8091
 
 spring:
@@ -20,4 +20,6 @@ spring:
   # to avoid initialization done by hibernate
   jpa.hibernate.ddl-auto: none
   data.rest.max-page-size: 100000
+  #data.rest.maxPageSize: 100000
+
 

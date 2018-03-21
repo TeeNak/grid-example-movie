@@ -17,8 +17,8 @@
         <apache-commons-lang.version>3.3.2</apache-commons-lang.version>
 
         <!-- Spring boot -->
-        <spring-boot.version>1.2.5.RELEASE</spring-boot.version>
-        <spring-loaded.version>1.2.3.RELEASE</spring-loaded.version>
+        <spring-boot.version>2.0.0.RELEASE</spring-boot.version>
+        <spring-loaded.version>1.2.5.RELEASE</spring-loaded.version>
 
     </properties>
 
