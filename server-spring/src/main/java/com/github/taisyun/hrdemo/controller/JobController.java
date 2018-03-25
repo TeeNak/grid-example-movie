@@ -1,6 +1,7 @@
 package com.github.taisyun.hrdemo.controller;
 
 import com.github.taisyun.hrdemo.domain.Job;
+import com.github.taisyun.hrdemo.dto.ErrorResponse;
 import com.github.taisyun.hrdemo.repository.JobRepository;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class JobController {
     }
 
     @RequestMapping(value = "/jobs/list", method = RequestMethod.PUT)
-    public ResponseEntity<String> putJobList(@RequestBody List<Job> jobs) {
+    public ResponseEntity<Object> putJobList(@RequestBody List<Job> jobs) {
         try {
 
             jobs.forEach( job -> {
@@ -48,14 +49,10 @@ public class JobController {
             jobRepository.saveAll(jobs);
 
         } catch (ObjectOptimisticLockingFailureException e) {
-            String json = String.join(System.getProperty("line.separator"),
-                    "{",
-                    "  \"result\": false,",
-                    "  \"message\": " + e.getMessage() + ",",
-                    "}") ;
-            return new ResponseEntity<String>(json, HttpStatus.CONFLICT);
+            ErrorResponse er = new ErrorResponse("The object you are trying to save was changed by another user. Please refresh data.");
+            return new ResponseEntity<Object>(er, HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
     }
 
 }

@@ -17,7 +17,8 @@ export class AppComponent {
   columnDefs: any[];
   rowData: any[];
 
-  public message;
+  public message: string;
+  public isError: boolean;
 
   constructor(public http: HttpClient) {
 
@@ -52,6 +53,7 @@ export class AppComponent {
             },
             (err) => {
                 this.message = err;
+                this.isError = true;
                 reject(err);
             }
         );
@@ -63,6 +65,7 @@ export class AppComponent {
   public loadData($event) {
     this.doLoadData().then( () => {
         this.message = 'Successfully loaded the data.';
+        this.isError = false;
     });
 
   }
@@ -74,13 +77,21 @@ export class AppComponent {
     };
     const response: Observable<Object> =
         this.http.put('/hrdemo/jobs/list', data, options);
-    response.subscribe( () => {
-        // reload
-        this.doLoadData().then( () => {
-            this.message = 'Successfully saved and reloaded the data.';
-        });
-
-    });
+    response.subscribe(
+        () => {
+            // reload
+            this.doLoadData().then( () => {
+            this.isError = false;
+                this.message = 'Successfully saved and reloaded the data.';
+                this.isError = false;
+            });
+            this.isError = false;
+        },
+        (err) => {
+            this.message = err.error.message;
+            this.isError = true;
+        }
+    );
 
   }
 
