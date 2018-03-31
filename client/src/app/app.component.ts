@@ -40,7 +40,7 @@ export class AppComponent {
 
   public doLoadData = function() {
     const response: Observable<Response> =
-        this.http.get('/hrdemo/jobs/list');
+        this.http.get('/moviedemo/movies/list');
 
     const result = new Promise<{}>(
       (resolve: (value?: any) => void, reject: (reason?: any) => void) => {
@@ -76,7 +76,7 @@ export class AppComponent {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
     const response: Observable<Object> =
-        this.http.put('/hrdemo/jobs/list', data, options);
+        this.http.put('/moviedemo/movies/list', data, options);
     response.subscribe(
         () => {
             // reload

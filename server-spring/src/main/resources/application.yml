@@ -1,6 +1,6 @@
 
 server:
-  servlet.contextPath: /hrdemo
+  servlet.contextPath: /moviedemo
   port: 8091
 
 spring:
@@ -8,8 +8,8 @@ spring:
     # HSQL Settings
     platform: hsqldb
     driverClassName: org.hsqldb.jdbcDriver
-    url: jdbc:hsqldb:mem:hrdemo
-    #url: jdbc:hsqldb:hsql://localhost/hrdemo
+    url: jdbc:hsqldb:mem:moviedemo
+    #url: jdbc:hsqldb:hsql://localhost/moviedemo
     username: sa
     password:
     # initialization

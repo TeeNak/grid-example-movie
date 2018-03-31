@@ -9,7 +9,7 @@
     <logger name="org.springframework.security" level="DEBUG"/>
     <logger name="org.springframework.boot.autoconfigure.jdbc" level="DEBUG"/>
 
-    <logger name="com.github.taisyun" level="DEBUG"/>
+    <logger name="com.github.teenak" level="DEBUG"/>
 
 
 </configuration>
