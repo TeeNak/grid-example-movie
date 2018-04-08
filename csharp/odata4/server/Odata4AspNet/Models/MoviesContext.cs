@@ -12,6 +12,7 @@ namespace Odata4AspNet.Models
                 : base("name=MoviesContext")
         {
             Database.SetInitializer<MoviesContext>(new MoviesContextInitializer());
+            Database.Initialize(false);
         }
         public DbSet<Movie> Movies { get; set; }
     }
