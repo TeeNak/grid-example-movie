@@ -31,6 +31,10 @@ namespace Odata4AspNet
                 routeName: "ODataRoute",
                 routePrefix: null,
                 model: builder.GetEdmModel());
+
+            // Warmup database
+            MoviesContext context = new MoviesContext();
+            context.Database.Initialize(false);
         }
     }
 }
