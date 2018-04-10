@@ -1,0 +1,19 @@
+{
+  "/Movies": {
+    "target": "http://localhost:40221",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "autoRewrite": true,
+    "pathRewrite": { "http://localhost:40221/": "/" }
+  },
+  "/Movies/**": {
+    "target": "http://localhost:40221",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "autoRewrite": true,
+    "pathRewrite": { "http://localhost:40221/": "/" }
+  }
+}
+
