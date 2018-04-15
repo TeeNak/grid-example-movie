@@ -8,6 +8,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.OData;
+using System.Data.Entity.Migrations;
+using System.Linq.Expressions;
 
 namespace Odata4AspNet.Controllers
 {
@@ -118,6 +120,17 @@ namespace Odata4AspNet.Controllers
             }
             db.Movies.Remove(movie);
             await db.SaveChangesAsync();
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // http://localhost:40221/Movies/Action.UpdateAll/
+        [HttpPost]
+        public async Task<IHttpActionResult> UpdateAll(ODataActionParameters parameters)
+        {
+            // Do your thing here..
+            var movies = parameters["value"] as IEnumerable<Movie>;
+
+            db.Movies.AddOrUpdate(c => c.Id, movies.ToArray());
             return StatusCode(HttpStatusCode.NoContent);
         }
     }

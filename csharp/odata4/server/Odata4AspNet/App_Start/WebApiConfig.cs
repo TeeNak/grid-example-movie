@@ -26,6 +26,15 @@ namespace Odata4AspNet
 */
             ODataModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<Movie>("Movies");
+
+            builder.Namespace = "Action";
+
+            //builder.EntityType<Movie>()
+            builder.EntityType<Movie>().Collection
+                    .Action("UpdateAll")
+                .CollectionParameter<Movie>("value");
+
+
             config.Filter().Expand().Select().OrderBy().MaxTop(null).Count();
             config.MapODataServiceRoute(
                 routeName: "ODataRoute",
