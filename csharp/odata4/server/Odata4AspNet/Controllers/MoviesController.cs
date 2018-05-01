@@ -127,10 +127,10 @@ namespace Odata4AspNet.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> UpdateAll(ODataActionParameters parameters)
         {
-            // Do your thing here..
             var movies = parameters["value"] as IEnumerable<Movie>;
 
             db.Movies.AddOrUpdate(c => c.Id, movies.ToArray());
+            await db.SaveChangesAsync();
             return StatusCode(HttpStatusCode.NoContent);
         }
     }

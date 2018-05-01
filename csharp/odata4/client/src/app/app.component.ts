@@ -71,12 +71,12 @@ export class AppComponent {
   }
 
   public saveData($event) {
-    const data: string = JSON.stringify(this.rowData);
+    const data: string = JSON.stringify({ value: this.rowData });
     const options = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
     const response: Observable<Object> =
-        this.http.put('/moviedemo/movies/list', data, options);
+        this.http.post('/Movies/Action.UpdateAll/', data, options);
     response.subscribe(
         () => {
             // reload
