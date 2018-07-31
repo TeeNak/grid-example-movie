@@ -26,14 +26,14 @@ namespace Odata4AspNet.Controllers
             base.Dispose(disposing);
         }
 
-        // http://localhost:40221/Movies
+        // GET http://localhost:40221/Movies
         [EnableQuery]
         public IQueryable<Movie> Get()
         {
             return db.Movies;
         }
 
-        // http://localhost:40221/Movies(1)
+        // GET http://localhost:40221/Movies(1)
         [EnableQuery]
         public SingleResult<Movie> Get([FromODataUri] int key)
         {
@@ -41,6 +41,7 @@ namespace Odata4AspNet.Controllers
             return SingleResult.Create(result);
         }
 
+        // POST http://localhost:40221/Movies/
         public async Task<IHttpActionResult> Post(Movie movie)
         {
             if (!ModelState.IsValid)
