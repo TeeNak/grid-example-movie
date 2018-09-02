@@ -107,6 +107,7 @@ namespace Odata4AspNet.Models
                 using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
                 {
                     var csvReader = new CsvReader(reader);
+                    csvReader.Configuration.RegisterClassMap<MovieCsvMapper>();
                     var movies = csvReader.GetRecords<Movie>().ToArray();
 
                     if (!(context.Database.Connection is SqlConnection))

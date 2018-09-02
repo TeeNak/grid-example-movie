@@ -134,5 +134,21 @@ namespace Odata4AspNet.Controllers
             await db.SaveChangesAsync();
             return StatusCode(HttpStatusCode.NoContent);
         }
+
+        // http://localhost:40221/Movies/Action.UpdateAllSync/
+        [HttpPost]
+        public IHttpActionResult UpdateAllSync(ODataActionParameters parameters)
+        {
+
+            var updateAllAsyncWrap = (Func<ODataActionParameters, Task<IHttpActionResult>>)(async (p) =>
+            {
+                return await UpdateAll(p).ConfigureAwait(false);
+            });
+
+            var task = updateAllAsyncWrap(parameters);
+            return task.Result; // ConfigureAwait is necessary to do this.
+        }
+
+
     }
 }

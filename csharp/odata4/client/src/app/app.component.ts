@@ -81,14 +81,13 @@ export class AppComponent {
         () => {
             // reload
             this.doLoadData().then( () => {
-            this.isError = false;
                 this.message = 'Successfully saved and reloaded the data.';
                 this.isError = false;
             });
             this.isError = false;
         },
         (err) => {
-            this.message = err.error.message;
+            this.message = err.error.error.message;
             this.isError = true;
         }
     );

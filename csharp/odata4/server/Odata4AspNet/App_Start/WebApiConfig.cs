@@ -34,6 +34,10 @@ namespace Odata4AspNet
                     .Action("UpdateAll")
                 .CollectionParameter<Movie>("value");
 
+            builder.EntityType<Movie>().Collection
+                    .Action("UpdateAllSync")
+                .CollectionParameter<Movie>("value");
+
 
             config.Filter().Expand().Select().OrderBy().MaxTop(null).Count();
             config.MapODataServiceRoute(
