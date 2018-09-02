@@ -87,7 +87,8 @@ export class AppComponent {
             this.isError = false;
         },
         (err) => {
-            this.message = err.error.error.message;
+            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            this.message = message;
             this.isError = true;
         }
     );

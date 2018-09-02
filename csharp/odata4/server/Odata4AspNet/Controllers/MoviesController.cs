@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.OData;
 using System.Data.Entity.Migrations;
 using System.Linq.Expressions;
+using System.Net.Http;
 
 namespace Odata4AspNet.Controllers
 {
@@ -130,25 +131,69 @@ namespace Odata4AspNet.Controllers
         {
             var movies = parameters["value"] as IEnumerable<Movie>;
 
-            db.Movies.AddOrUpdate(c => c.Id, movies.ToArray());
-            await db.SaveChangesAsync();
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // http://localhost:40221/Movies/Action.UpdateAllSync/
-        [HttpPost]
-        public IHttpActionResult UpdateAllSync(ODataActionParameters parameters)
-        {
-
-            var updateAllAsyncWrap = (Func<ODataActionParameters, Task<IHttpActionResult>>)(async (p) =>
+            //db.Movies.AddOrUpdate(c => c.Id, movies.ToArray());
+            foreach (var m in movies)
             {
-                return await UpdateAll(p).ConfigureAwait(false);
-            });
+                db.Entry(m).State = EntityState.Modified;
+            }
 
-            var task = updateAllAsyncWrap(parameters);
-            return task.Result; // ConfigureAwait is necessary to do this.
+            try
+            {
+                await db.SaveChangesAsync();
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var entry = ex.Entries.First();
+
+                var errorMessage = "";
+                var clientValues = (Movie)entry.Entity;
+                var databaseEntry = entry.GetDatabaseValues();
+                if (databaseEntry == null)
+                {
+                    errorMessage =
+                        "Unable to save changes. The department was deleted by another user.";
+                }
+                else
+                {
+                    var databaseValues = (Movie)databaseEntry.ToObject();
+
+
+                    errorMessage += "The record you attempted to edit "
+                        + "was modified by another user after you got the original value. The "
+                        + "edit operation was canceled and the current values in the database "
+                        + "have been displayed. Please reload. ";
+
+                    errorMessage += Environment.NewLine + "Current value: ";
+                    errorMessage += Environment.NewLine + $"Code : {databaseValues.Code}";
+
+                    if (databaseValues.Name != clientValues.Name)
+                    {
+                        //    ModelState.AddModelError("Name", "Current value: "
+                        //        + databaseValues.Name);
+                        errorMessage += Environment.NewLine + $"Name : {databaseValues.Name}";
+                    }
+
+
+                }
+
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, errorMessage));
+            }
         }
 
+        //// http://localhost:40221/Movies/Action.UpdateAllSync/
+        //[HttpPost]
+        //public IHttpActionResult UpdateAllSync(ODataActionParameters parameters)
+        //{
+
+        //    var updateAllAsyncWrap = (Func<ODataActionParameters, Task<IHttpActionResult>>)(async (p) =>
+        //    {
+        //        return await UpdateAll(p).ConfigureAwait(false);
+        //    });
+
+        //    var task = updateAllAsyncWrap(parameters);
+        //    return task.Result; // ConfigureAwait is necessary to do this.
+        //}
 
     }
 }
