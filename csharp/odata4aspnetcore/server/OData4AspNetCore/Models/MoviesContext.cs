@@ -15,15 +15,14 @@ namespace OData4AspNetCore.Models
 
         public DbSet<Movie> Movies { get; set; }
 
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Press> Press { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //proper way to seed
-            modelBuilder.Entity<Movie>().HasData(new Movie { Id = 1, Code = "AB0001", Name = "Star Wars" });
+            foreach( var m in SeedData.GetMovies())
+            {
+                modelBuilder.Entity<Movie>().HasData(m);
+            }
 
-            modelBuilder.Entity<Book>().OwnsOne(c => c.Location);
+
         }
     }
 }

@@ -58,8 +58,6 @@ namespace OData4AspNetCore
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<Book>("Books");
-            builder.EntitySet<Press>("Presses");
             builder.EntitySet<Movie>("Movies");
             return builder.GetEdmModel();
         }
