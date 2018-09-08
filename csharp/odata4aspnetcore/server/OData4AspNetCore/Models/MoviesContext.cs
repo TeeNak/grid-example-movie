@@ -17,10 +17,7 @@ namespace OData4AspNetCore.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach( var m in SeedData.GetMovies())
-            {
-                modelBuilder.Entity<Movie>().HasData(m);
-            }
+            modelBuilder.Entity<Movie>().HasData(SeedData.GetMovies().ToArray());
 
 
         }

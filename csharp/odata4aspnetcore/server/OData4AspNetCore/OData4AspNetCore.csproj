@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Models\SeedData\Movies.csv" />
+    <None Remove="Models\SeedData\Movies_1000.csv" />
+    <None Remove="Models\SeedData\Movies_45000.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Models\SeedData\Movies.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
