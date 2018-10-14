@@ -20,19 +20,12 @@ namespace OData4AspNetCore
 {
     public class Startup
     {
+        private string baseDir;
+
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
-
-            //System.AppContext.BaseDirectory or System.AppDomain.CurrentDomain.BaseDirectory
-
-            string baseDir = env.ContentRootPath;
-
-            string appDataDir = System.IO.Path.Combine(baseDir, "App_Data");
-            Directory.CreateDirectory(appDataDir);
-
-            AppDomain.CurrentDomain.SetData("DataDirectory", appDataDir);
-
+            baseDir = env.ContentRootPath;
         }
 
         public IConfiguration Configuration { get; }
@@ -43,8 +36,10 @@ namespace OData4AspNetCore
             //services.AddDbContext<MoviesContext>(opt => opt.UseInMemoryDatabase("MoviesCore"));
             var connString = Configuration.GetConnectionString("MoviesCoreDatabase");
 
-            var appDataDir = (string)AppDomain.CurrentDomain.GetData("DataDirectory");
-            connString = connString.Replace("|DataDirectory|", appDataDir); // this is needed.
+            string appDataDir = System.IO.Path.Combine(baseDir, "App_Data");
+            Directory.CreateDirectory(appDataDir);
+
+            connString = connString.Replace("|DataDirectory|", appDataDir); // this is needed if you are using ef core.
 
             services.AddDbContext<MoviesContext>(options =>
                 options.UseSqlServer(connString));
