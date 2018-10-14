@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData.Builder;
@@ -19,9 +20,19 @@ namespace OData4AspNetCore
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+
+            //System.AppContext.BaseDirectory or System.AppDomain.CurrentDomain.BaseDirectory
+
+            string baseDir = env.ContentRootPath;
+
+            string appDataDir = System.IO.Path.Combine(baseDir, "App_Data");
+            Directory.CreateDirectory(appDataDir);
+
+            AppDomain.CurrentDomain.SetData("DataDirectory", appDataDir);
+
         }
 
         public IConfiguration Configuration { get; }
@@ -29,7 +40,15 @@ namespace OData4AspNetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MoviesContext>(opt => opt.UseInMemoryDatabase("BookLists"));
+            //services.AddDbContext<MoviesContext>(opt => opt.UseInMemoryDatabase("MoviesCore"));
+            var connString = Configuration.GetConnectionString("MoviesCoreDatabase");
+
+            var appDataDir = (string)AppDomain.CurrentDomain.GetData("DataDirectory");
+            connString = connString.Replace("|DataDirectory|", appDataDir); // this is needed.
+
+            services.AddDbContext<MoviesContext>(options =>
+                options.UseSqlServer(connString));
+
             services.AddOData();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -45,7 +64,14 @@ namespace OData4AspNetCore
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<MoviesContext>();
-                context.Database.EnsureCreated();
+                try
+                {
+                    context.Database.EnsureCreated();
+                }
+                catch
+                {
+                    throw;
+                }
             }
 
             app.UseMvc(b =>
