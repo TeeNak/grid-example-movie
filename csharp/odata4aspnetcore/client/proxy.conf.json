@@ -1,0 +1,19 @@
+{
+  "/odata/Movies": {
+    "target": "http://localhost:54701",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "autoRewrite": true,
+    "pathRewrite": { "http://localhost:54701/": "/" }
+  },
+  "/odata/Movies/**": {
+    "target": "http://localhost:54701",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "autoRewrite": true,
+    "pathRewrite": { "http://localhost:54701/": "/" }
+  }
+}
+
