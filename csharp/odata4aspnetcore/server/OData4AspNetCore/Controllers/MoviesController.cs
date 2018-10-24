@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OData4AspNetCore.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -29,7 +31,6 @@ namespace OData4AspNetCore.Controllers
             return Ok(_db.Movies);
         }
 
-        [EnableQuery]
         // POST http://localhost:54701/odata/Movies
         // add single movie
         public IActionResult Post([FromBody]Movie movie)
@@ -45,6 +46,11 @@ namespace OData4AspNetCore.Controllers
 
                 movie.Id = 0;
 
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _db.Movies.Add(movie);
                 _db.SaveChanges();
                 return Created(movie);
@@ -53,6 +59,88 @@ namespace OData4AspNetCore.Controllers
             {
                 throw;
             }
+        }
+
+        private bool MovieExists(int id)
+        {
+            return _db.Movies.Any(x => x.Id == id);
+        }
+
+        public IActionResult Patch([FromODataUri] int id, [FromBody] Delta<Movie> movie)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var entity = _db.Movies.Find(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            movie.Patch(entity);
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MovieExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Updated(entity);
+        }
+
+        public IActionResult Put([FromODataUri]int id, [FromBody] Movie update)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != update.Id)
+            {
+                return BadRequest();
+            }
+
+            _db.Entry(update).State = EntityState.Modified;
+
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MovieExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Updated(update);
+        }
+
+        public ActionResult Delete([FromODataUri] int key)
+        {
+            var movie = _db.Movies.Find(key);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            _db.Movies.Remove(movie);
+            _db.SaveChanges();
+            return StatusCode((int)HttpStatusCode.NoContent);
         }
     }
 }
