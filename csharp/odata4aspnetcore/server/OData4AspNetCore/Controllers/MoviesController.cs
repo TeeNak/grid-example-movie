@@ -23,10 +23,36 @@ namespace OData4AspNetCore.Controllers
         }
 
         [EnableQuery]
-        // http://localhost:54701/odata/Movies
+        // GET http://localhost:54701/odata/Movies
         public IActionResult Get()
         {
             return Ok(_db.Movies);
+        }
+
+        [EnableQuery]
+        // POST http://localhost:54701/odata/Movies
+        // add single movie
+        public IActionResult Post([FromBody]Movie movie)
+        {
+            try
+            {
+                // https://docs.microsoft.com/en-us/ef/core/modeling/generated-properties
+                // If you add an entity to the context that has a value assigned to the property, 
+                // then EF will attempt to insert that value rather than generating a new one.
+                // A property is considered to have a value assigned if it is not assigned the CLR default value
+                // (null for string, 0 for int, Guid.Empty for Guid, etc.).
+                // For more information, see Explicit values for generated properties.
+
+                movie.Id = 0;
+
+                _db.Movies.Add(movie);
+                _db.SaveChanges();
+                return Created(movie);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

@@ -95,4 +95,28 @@ export class AppComponent {
 
   }
 
+  public addFirstLine($event) {
+    const data: string = JSON.stringify(this.rowData[0]);
+    const options = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+    const response: Observable<Object> =
+        this.http.post('/odata/Movies', data, options);
+    response.subscribe(
+        () => {
+            // reload
+            this.doLoadData().then( () => {
+                this.message = 'Successfully saved and reloaded the data.';
+                this.isError = false;
+            });
+            this.isError = false;
+        },
+        (err) => {
+            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            this.message = message;
+            this.isError = true;
+        }
+    );
+
+  }
 }
