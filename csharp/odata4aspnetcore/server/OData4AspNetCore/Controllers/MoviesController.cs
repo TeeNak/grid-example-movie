@@ -31,6 +31,12 @@ namespace OData4AspNetCore.Controllers
             return Ok(_db.Movies);
         }
 
+        // GET http://localhost:54701/odata/Movies(1)
+        public IActionResult Get([FromODataUri]int key)
+        {
+            return Ok(_db.Movies.FirstOrDefault(c => c.Id == key));
+        }
+
         // POST http://localhost:54701/odata/Movies
         // add single movie
         public IActionResult Post([FromBody]Movie movie)
@@ -66,14 +72,16 @@ namespace OData4AspNetCore.Controllers
             return _db.Movies.Any(x => x.Id == id);
         }
 
-        public IActionResult Patch([FromODataUri] int id, [FromBody] Delta<Movie> movie)
+        // PATCH http://localhost:54701/odata/Movies(1)
+        // the variable name "key" is default. if you change the name you need to set ODataRoutePrefix explicitly.
+        public IActionResult Patch([FromODataUri] int key, [FromBody] Delta<Movie> movie)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var entity = _db.Movies.Find(id);
+            var entity = _db.Movies.Find(key);
             if (entity == null)
             {
                 return NotFound();
@@ -85,7 +93,7 @@ namespace OData4AspNetCore.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(id))
+                if (!MovieExists(key))
                 {
                     return NotFound();
                 }
@@ -98,14 +106,15 @@ namespace OData4AspNetCore.Controllers
             return Updated(entity);
         }
 
-        public IActionResult Put([FromODataUri]int id, [FromBody] Movie update)
+        // PUT http://localhost:54701/odata/Movies(1)
+        public IActionResult Put([FromODataUri]int key, [FromBody] Movie update)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != update.Id)
+            if (key != update.Id)
             {
                 return BadRequest();
             }
@@ -118,7 +127,7 @@ namespace OData4AspNetCore.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(id))
+                if (!MovieExists(key))
                 {
                     return NotFound();
                 }
@@ -131,6 +140,7 @@ namespace OData4AspNetCore.Controllers
             return Updated(update);
         }
 
+        // DELETE http://localhost:54701/odata/Movies(1)
         public ActionResult Delete([FromODataUri] int key)
         {
             var movie = _db.Movies.Find(key);

@@ -119,4 +119,31 @@ export class AppComponent {
     );
 
   }
+
+  public updateFirstLine($event) {
+    const data = this.rowData[0];
+    const stringData: string = JSON.stringify(data);
+    const options = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+    const id = data.Id;
+    const response: Observable<Object> =
+        this.http.patch(`/odata/Movies(${id})`, stringData, options);
+    response.subscribe(
+        () => {
+            // reload
+            this.doLoadData().then( () => {
+                this.message = 'Successfully saved and reloaded the data.';
+                this.isError = false;
+            });
+            this.isError = false;
+        },
+        (err) => {
+            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            this.message = message;
+            this.isError = true;
+        }
+    );
+
+  }
 }
