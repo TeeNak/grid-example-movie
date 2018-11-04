@@ -87,7 +87,7 @@ export class AppComponent {
             this.isError = false;
         },
         (err) => {
-            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            const message = err && err.error && err.error.value || 'error!';
             this.message = message;
             this.isError = true;
         }
@@ -112,7 +112,7 @@ export class AppComponent {
             this.isError = false;
         },
         (err) => {
-            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            const message = err && err.error && err.error.value || 'error!';
             this.message = message;
             this.isError = true;
         }
@@ -128,7 +128,7 @@ export class AppComponent {
     };
     const id = data.Id;
     const response: Observable<Object> =
-        this.http.patch(`/odata/Movies(${id})`, stringData, options);
+        this.http.put(`/odata/Movies(${id})`, stringData, options);
     response.subscribe(
         () => {
             // reload
@@ -139,7 +139,7 @@ export class AppComponent {
             this.isError = false;
         },
         (err) => {
-            const message = err && err.error && err.error.error && err.error.error.message || 'error!';
+            const message = err && err.error && err.error.value || 'error!';
             this.message = message;
             this.isError = true;
         }

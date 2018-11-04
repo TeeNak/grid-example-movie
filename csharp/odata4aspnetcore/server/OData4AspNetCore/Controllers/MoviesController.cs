@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OData4AspNetCore.Models;
@@ -91,16 +92,42 @@ namespace OData4AspNetCore.Controllers
             {
                 _db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!MovieExists(key))
+                var entry = ex.Entries.First();
+
+                var errorMessage = "";
+                var clientValues = (Movie)entry.Entity;
+                var databaseEntry = entry.GetDatabaseValues();
+                if (databaseEntry == null)
                 {
-                    return NotFound();
+                    errorMessage =
+                        "Unable to save changes. The record was deleted by another user.";
                 }
                 else
                 {
-                    throw;
+                    var databaseValues = (Movie)databaseEntry.ToObject();
+
+
+                    errorMessage += "The record you attempted to edit "
+                        + "was modified by another user after you got the original value. The "
+                        + "edit operation was canceled and the current values in the database "
+                        + "have been displayed. Please reload. ";
+
+                    errorMessage += Environment.NewLine + "Current value: ";
+                    errorMessage += Environment.NewLine + $"Code : {databaseValues.Code}";
+
+                    if (databaseValues.Name != clientValues.Name)
+                    {
+                        //    ModelState.AddModelError("Name", "Current value: "
+                        //        + databaseValues.Name);
+                        errorMessage += Environment.NewLine + $"Name : {databaseValues.Name}";
+                    }
+
+
                 }
+
+                return StatusCode(StatusCodes.Status412PreconditionFailed, errorMessage);
             }
 
             return Updated(entity);
@@ -125,16 +152,44 @@ namespace OData4AspNetCore.Controllers
             {
                 _db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
-                if (!MovieExists(key))
+                var entry = ex.Entries.First();
+
+                var errorMessage = "";
+                var clientValues = (Movie)entry.Entity;
+                var databaseEntry = entry.GetDatabaseValues();
+                if (databaseEntry == null)
                 {
-                    return NotFound();
+                    errorMessage =
+                        "Unable to save changes. The record was deleted by another user.";
                 }
                 else
                 {
-                    throw;
+                    var databaseValues = (Movie)databaseEntry.ToObject();
+
+
+                    errorMessage += "The record you attempted to edit "
+                        + "was modified by another user after you got the original value. The "
+                        + "edit operation was canceled and the current values in the database "
+                        + "have been displayed. Please reload. ";
+
+                    errorMessage += Environment.NewLine + "Current value: ";
+                    errorMessage += Environment.NewLine + $"Code : {databaseValues.Code}";
+
+                    if (databaseValues.Name != clientValues.Name)
+                    {
+                        //    ModelState.AddModelError("Name", "Current value: "
+                        //        + databaseValues.Name);
+                        errorMessage += Environment.NewLine + $"Name : {databaseValues.Name}";
+                    }
+
+
                 }
+
+                return StatusCode(StatusCodes.Status412PreconditionFailed, errorMessage);
+
+
             }
 
             return Updated(update);
