@@ -76,7 +76,7 @@ export class AppComponent {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     };
     const response: Observable<Object> =
-        this.http.post('/odata/Movies/Action.UpdateAll/', data, options);
+        this.http.post('/odata/Movies/Default.UpdateAll/', data, options);
     response.subscribe(
         () => {
             // reload
