@@ -79,7 +79,10 @@ namespace OData4AspNetCore
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<Movie>("Movies");
+            builder.Namespace = "Action";
+            builder.EntitySet<Movie>("Movies").EntityType
+                .Action("UpdateAll").CollectionParameter<Movie>("value");
+
             return builder.GetEdmModel();
         }
 

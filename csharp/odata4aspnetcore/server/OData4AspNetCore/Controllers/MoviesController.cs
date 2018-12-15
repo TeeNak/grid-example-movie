@@ -207,5 +207,64 @@ namespace OData4AspNetCore.Controllers
             _db.SaveChanges();
             return StatusCode((int)HttpStatusCode.NoContent);
         }
+
+        // http://localhost:54701/odata/Movies(1)/Action.UpdateAll/
+        [HttpPost]
+        public IActionResult UpdateAll(ODataActionParameters parameters)
+        {
+            var movies = parameters["value"] as IEnumerable<Movie>;
+
+            //db.Movies.AddOrUpdate(c => c.Id, movies.ToArray());
+            foreach (var m in movies)
+            {
+                _db.Entry(m).State = EntityState.Modified;
+            }
+
+            try
+            {
+                _db.SaveChanges();
+                return StatusCode((int)HttpStatusCode.NoContent);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var entry = ex.Entries.First();
+
+                var errorMessage = "";
+                var clientValues = (Movie)entry.Entity;
+                var databaseEntry = entry.GetDatabaseValues();
+                if (databaseEntry == null)
+                {
+                    errorMessage =
+                        "Unable to save changes. The department was deleted by another user.";
+                }
+                else
+                {
+                    var databaseValues = (Movie)databaseEntry.ToObject();
+
+
+                    errorMessage += "The record you attempted to edit "
+                        + "was modified by another user after you got the original value. The "
+                        + "edit operation was canceled and the current values in the database "
+                        + "have been displayed. Please reload. ";
+
+                    errorMessage += Environment.NewLine + "Current value: ";
+                    errorMessage += Environment.NewLine + $"Code : {databaseValues.Code}";
+
+                    if (databaseValues.Name != clientValues.Name)
+                    {
+                        //    ModelState.AddModelError("Name", "Current value: "
+                        //        + databaseValues.Name);
+                        errorMessage += Environment.NewLine + $"Name : {databaseValues.Name}";
+                    }
+
+
+                }
+
+                return StatusCode(StatusCodes.Status412PreconditionFailed, errorMessage);
+
+            }
+        }
+
+
     }
 }

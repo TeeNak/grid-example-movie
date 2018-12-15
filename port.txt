@@ -1,0 +1,11 @@
+
+spring
+4200 -> 8091
+http://localhost:4200/
+http://localhost:8091/moviedemo/movies/list
+
+
+odata4
+
+http://localhost:40221/Movies
+
