@@ -80,8 +80,9 @@ namespace OData4AspNetCore
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.Namespace = "Action";
-            builder.EntitySet<Movie>("Movies").EntityType
-                .Action("UpdateAll").CollectionParameter<Movie>("value");
+
+            builder.EntitySet<Movie>("Movies")
+                .EntityType.Collection.Action("UpdateAll").CollectionParameter<Movie>("value");
 
             return builder.GetEdmModel();
         }

@@ -208,7 +208,7 @@ namespace OData4AspNetCore.Controllers
             return StatusCode((int)HttpStatusCode.NoContent);
         }
 
-        // http://localhost:54701/odata/Movies(1)/Action.UpdateAll/
+        // http://localhost:54701/odata/Movies/Action.UpdateAll/
         [HttpPost]
         public IActionResult UpdateAll(ODataActionParameters parameters)
         {
