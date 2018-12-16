@@ -235,7 +235,7 @@ namespace OData4AspNetCore.Controllers
                 if (databaseEntry == null)
                 {
                     errorMessage =
-                        "Unable to save changes. The department was deleted by another user.";
+                        "Unable to save changes. The record was deleted by another user.";
                 }
                 else
                 {
