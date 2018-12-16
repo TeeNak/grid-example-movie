@@ -27,20 +27,20 @@ namespace OData4AspNetCore.Controllers
 
         [EnableQuery]
         // GET http://localhost:54701/odata/Movies
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_db.Movies);
+            return Ok(await _db.Movies.ToListAsync());
         }
 
         // GET http://localhost:54701/odata/Movies(1)
-        public IActionResult Get([FromODataUri]int key)
+        public async Task<IActionResult> Get([FromODataUri]int key)
         {
-            return Ok(_db.Movies.FirstOrDefault(c => c.Id == key));
+            return Ok(await _db.Movies.Where(c => c.Id == key).FirstOrDefaultAsync());
         }
 
         // POST http://localhost:54701/odata/Movies
         // add single movie
-        public IActionResult Post([FromBody]Movie movie)
+        public async Task<IActionResult> Post([FromBody]Movie movie)
         {
             try
             {
@@ -58,8 +58,8 @@ namespace OData4AspNetCore.Controllers
                     return BadRequest(ModelState);
                 }
 
-                _db.Movies.Add(movie);
-                _db.SaveChanges();
+                await _db.Movies.AddAsync(movie);
+                await _db.SaveChangesAsync();
                 return Created(movie);
             }
             catch
@@ -68,21 +68,21 @@ namespace OData4AspNetCore.Controllers
             }
         }
 
-        private bool MovieExists(int id)
+        private async Task<bool> MovieExists(int id)
         {
-            return _db.Movies.Any(x => x.Id == id);
+            return await _db.Movies.AnyAsync(x => x.Id == id);
         }
 
         // PATCH http://localhost:54701/odata/Movies(1)
         // the variable name "key" is default. if you change the name you need to set ODataRoutePrefix explicitly.
-        public IActionResult Patch([FromODataUri] int key, [FromBody] Delta<Movie> movie)
+        public async Task<IActionResult> Patch([FromODataUri] int key, [FromBody] Delta<Movie> movie)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var entity = _db.Movies.Find(key);
+            var entity = await _db.Movies.FindAsync(key);
             if (entity == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace OData4AspNetCore.Controllers
             movie.Patch(entity);
             try
             {
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -134,7 +134,7 @@ namespace OData4AspNetCore.Controllers
         }
 
         // PUT http://localhost:54701/odata/Movies(1)
-        public IActionResult Put([FromODataUri]int key, [FromBody] Movie update)
+        public async Task<IActionResult> Put([FromODataUri]int key, [FromBody] Movie update)
         {
             if (!ModelState.IsValid)
             {
@@ -150,7 +150,7 @@ namespace OData4AspNetCore.Controllers
 
             try
             {
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -196,21 +196,21 @@ namespace OData4AspNetCore.Controllers
         }
 
         // DELETE http://localhost:54701/odata/Movies(1)
-        public ActionResult Delete([FromODataUri] int key)
+        public async Task<ActionResult> Delete([FromODataUri] int key)
         {
-            var movie = _db.Movies.Find(key);
+            var movie = await _db.Movies.FindAsync(key);
             if (movie == null)
             {
                 return NotFound();
             }
             _db.Movies.Remove(movie);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return StatusCode((int)HttpStatusCode.NoContent);
         }
 
         // http://localhost:54701/odata/Movies/Default.UpdateAll/
         [HttpPost]
-        public IActionResult UpdateAll(ODataActionParameters parameters)
+        public async Task<IActionResult> UpdateAll(ODataActionParameters parameters)
         {
             var movies = parameters["value"] as IEnumerable<Movie>;
 
@@ -222,7 +222,7 @@ namespace OData4AspNetCore.Controllers
 
             try
             {
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return StatusCode((int)HttpStatusCode.NoContent);
             }
             catch (DbUpdateConcurrencyException ex)
