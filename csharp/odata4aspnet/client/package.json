@@ -16,7 +16,7 @@
     "@angular/animations": "5.2.x",
     "@angular/common": "5.2.x",
     "@angular/compiler": "5.2.x",
-    "@angular/core": "5.2.x",
+    "@angular/core": "11.0.x",
     "@angular/forms": "5.2.x",
     "@angular/http": "5.2.x",
     "@angular/platform-browser": "5.2.x",
